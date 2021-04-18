@@ -5,16 +5,35 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.home.HomeFragment">
-    
-    <Button
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginBottom="10dp"
+        android:orientation="horizontal"
+        android:elevation="5dp">
+
+        <Button
         android:id="@+id/backButton"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:textColor="#FFF"
         android:text="Go Back"
-        android:layout_alignParentBottom="true"
-        android:visibility="gone"
-        android:layout_marginHorizontal="50dp"></Button>
+            android:layout_weight="1"
+            android:layout_marginHorizontal="10dp"
+        android:visibility="gone"></Button>
+        <Button
+            android:id="@+id/newButton"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:textColor="#FFF"
+            android:text="New File"
+            android:layout_marginHorizontal="10dp"
+            android:layout_weight="1"></Button>
+
+    </LinearLayout>
 
     <TextView
         android:id="@+id/notFound"

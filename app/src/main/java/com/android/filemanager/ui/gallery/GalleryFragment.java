@@ -25,6 +25,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.filemanager.R;
+import com.android.filemanager.pmTextEdit;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -32,6 +33,7 @@ import java.util.ArrayList;
 public class GalleryFragment extends Fragment {
 
     public Button backButton = null;
+    public Button newButton = null;
     public RecyclerView recycler = null;
     public TextView notFound = null;
 
@@ -47,6 +49,7 @@ public class GalleryFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_gallery, container, false);
 
         backButton = root.findViewById(R.id.backButton);
+        newButton = root.findViewById(R.id.newButton);
         recycler = root.findViewById(R.id.recycler);
         notFound = root.findViewById(R.id.notFound);
 
@@ -64,6 +67,21 @@ public class GalleryFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 goToPreviousDirectory();
+            }
+        });
+        newButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                File dir;
+                if( fileTree.size() == 0)
+                    dir = new File( android.os.Environment.getRootDirectory().getAbsolutePath() + "/");
+                else
+                    dir = fileTree.get( fileTree.size() - 1);
+
+                Intent intent = new Intent(getContext(), pmTextEdit.class);
+                intent.putExtra("FILE_ABSOLUTE_PATH", dir.getAbsolutePath());
+                startActivity(intent);
             }
         });
 
@@ -155,11 +173,20 @@ public class GalleryFragment extends Fragment {
                     } else {
                         //Open file
                         try {
-                            Intent intent = new Intent(Intent.ACTION_VIEW);
-                            intent.setDataAndType(Uri.fromFile( current), getFileMime( current.getAbsolutePath()));
-                            startActivity(intent);
-                        } catch (ActivityNotFoundException e) {
-                            Toast.makeText( getContext(), "Unable to open file", Toast.LENGTH_SHORT).show();
+                            String mime = getFileMime( current.getAbsolutePath());
+
+                            if( mime.equals("text/plain")){
+                                Intent intent = new Intent(getContext(), pmTextEdit.class);
+                                intent.putExtra("FILE_ABSOLUTE_PATH", current.getAbsolutePath());
+                                startActivity(intent);
+                            } else {
+                                Intent intent = new Intent(Intent.ACTION_VIEW);
+                                intent.setDataAndType(Uri.fromFile( current), mime);
+                                startActivity(intent);
+                            }
+
+                        } catch (Exception e) {
+                            Toast.makeText( getContext(), "" + e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     }
                 }
@@ -198,5 +225,11 @@ public class GalleryFragment extends Fragment {
                 return;
             }
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        populateDataInCurrentDirectory();
     }
 }
